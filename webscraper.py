@@ -38,11 +38,25 @@ fullURL = "https://courses.ksu.edu/" + "spring" + "2017" + "/AG"
 r = urllib.urlopen(fullURL).read()
 urlSoup = BeautifulSoup(r, "html.parser")
 coursesHeader = urlSoup.find_all('tr', class_='course')
+coursesContentOdd = urlSoup.find_all('tbody', class_='section')
+coursesContentEven = urlSoup.find_all('tbody', class_='section even')
 
-fileWriter = open('courseNum.txt', 'w')
+courseHeadWrite = open('courseNum.txt', 'w')
 
 for c in coursesHeader:
     for cont in c.contents:
         modString = (regex.split('(\d+)', cont.get_text()))
-        fileWriter.write(modString[0] + "," + modString[1] + "," + modString[2] + "\n")
+        courseHeadWrite.write(modString[0] + "," + modString[1] + "," + modString[2] + "\n")
+courseHeadWrite.close()
 
+for d in coursesContentOdd:
+    for cont in d.contents[0]:
+        print(cont.get_text())
+    print
+
+"""
+for d in coursesContentEven:
+    for cont in d.contents:
+        print(cont.get_text())
+    print("\n")
+"""
