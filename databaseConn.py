@@ -11,12 +11,12 @@ cursor.execute("DELETE FROM courseContent")
 
 
 file1 = open('courseNum.txt', 'r')
-#file2 = open('courseCont.txt', 'r')
+file2 = open('courseCont.txt', 'r')
 
 table1 = file1.read()
-#table2 = file2.read()
+table2 = file2.read()
 
 cursor.execute(table1)
-#cursor.execute(table2)
+cursor.execute(table2)
 cnx.commit()
 cnx.close()

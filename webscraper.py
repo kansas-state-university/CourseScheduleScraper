@@ -132,6 +132,8 @@ def __main__():
                                 elif(counter == 9):
                                     cleanText = sanitize(elem.get_text(), "instructor")
                                     courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"")
+                                else:
+                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"" + ",")
 
                                 counter += 1
                         else:
@@ -149,8 +151,12 @@ def __main__():
 
 def sanitize(sanText, type):
     if(type == "day"):
-        print("DAY: " + sanText)
-        return sanText
+        cleanText = []
+        for char in sanText:
+            if(char == 'M' or char == 'T' or char =='W' or char=='U' or char=='F'):
+                cleanText.append(str(char))
+        cleanText = ''.join(cleanText)
+        return (cleanText)
 
     elif(type == "time"):
         print
