@@ -10,9 +10,7 @@ semester = raw_input("What semester would you like to make a schedule for? (Spri
 schedulePull = semester + str(year) + "/schedule.html"
 print (schedulePull)
 
-schedulePull= "spring2017/schedule.html"
 data = requests.get("https://courses.ksu.edu/" + schedulePull)
-
 
 scheduleURLS = data.text
 
@@ -31,14 +29,13 @@ courseContentWrite = open('courseCont.sql', 'w')
 courseContentWrite.write("INSERT INTO courseContent\n")
 courseContentWrite.write("VALUES \n")
 
+
 for url in urlList:
     fullURL = "https://courses.ksu.edu/" + semester + str(year) + "/" + url
 
     r = urllib.urlopen(fullURL).read()
     urlSoup = BeautifulSoup(r, "html.parser")
     coursesHeader = urlSoup.find_all('tr', class_='course')
-
-
 
 
     headerCount = 0
@@ -52,16 +49,9 @@ for url in urlList:
                 courseHeadWrite.write("(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[2] + "\")," + "\n")
                 headerCount += 1
 
-    courseHeadWrite.write(";")
-
-
-
-
 
 
     coursesContent = urlSoup.find_all('tbody', class_='section')
-
-
 
     contentCount = 0
     for data in coursesContent:
@@ -84,7 +74,6 @@ for url in urlList:
                     else:
                         counter += 1
                 courseContentWrite.write(")")
-                courseContentWrite.write(";")
         else:
             for sectionRow in data.find_all('tr', class_='st'):
                 counter = 0
@@ -107,5 +96,7 @@ for url in urlList:
                 courseContentWrite.write(",\n")
         contentCount += 1
 
+courseContentWrite.write(";")
+courseHeadWrite.write(";")
 courseHeadWrite.close()
 courseContentWrite.close()
