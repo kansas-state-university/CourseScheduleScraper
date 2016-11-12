@@ -23,11 +23,11 @@ for link in soup.find_all('a'):
     if( len(str(link.get("href"))) < 7 and (str(link.get("href")) != "/" and str(link.get("href")) != "None") ):
         urlList.append(str(link.get("href")))
 
-courseHeadWrite = open('courseNum.txt', 'w')
+courseHeadWrite = open('courseNum.sql', 'w')
 courseHeadWrite.write("INSERT INTO courseHeader\n")
 courseHeadWrite.write("VALUES \n")
 
-courseContentWrite = open('courseCont.txt', 'w')
+courseContentWrite = open('courseCont.sql', 'w')
 courseContentWrite.write("INSERT INTO courseContent\n")
 courseContentWrite.write("VALUES \n")
 
