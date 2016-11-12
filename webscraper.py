@@ -6,10 +6,10 @@ import urllib
 year = input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
 semester = raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
 
-fullURL = semester + str(year) + "/schedule.html"
-print (fullURL)
+schedulePull = semester + str(year) + "/schedule.html"
+print (schedulePull)
 
-data = requests.get("https://courses.ksu.edu/" + fullURL)
+data = requests.get("https://courses.ksu.edu/" + schedulePull)
 
 
 scheduleURLS = data.text
@@ -18,18 +18,16 @@ soup = BeautifulSoup(scheduleURLS, "html.parser")
 
 urlList = []
 for link in soup.find_all('a'):
-    if (len(str(link.get("href"))) < 7 and (str(link.get("href"))) != "/" and (str(link.get("href"))) != "None"):
-        urlList.append(link.get("href"))
+    if( len(str(link.get("href"))) < 7 and (str(link.get("href")) != "/" and str(link.get("href")) != "None") ):
+        urlList.append(str(link.get("href")))
 
+"""Change this for the full list of URLS once you can do it for one
 for url in urlList:
-    print(str(url))
+    fullURL = "https://courses.ksu.edu/" + semester + str(year) + "/" + url
 
-r = urllib.urlopen('https://courses.k-state.edu/spring2017/EN/').read()
+    r = urllib.urlopen(fullURL).read()
+    urlSoup = BeautifulSoup(r, "html.parser")
+    courseHeaders = soup.find_all("tbody", {"class": "course-header"})
+    print(urlSoup.getText())
+    """
 
-soup = BeautifulSoup(r, "html.parser")
-
-
-courseHeaders = soup.find_all("tbody", {"class": "course-header"})
-
-
-print ()
