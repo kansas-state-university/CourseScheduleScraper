@@ -1,14 +1,16 @@
 from bs4 import BeautifulSoup
 import requests
+import regex
 
 import urllib
-
+"""Automating for the sake of debugging, uncomment when production ready
 year = input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
 semester = raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
 
 schedulePull = semester + str(year) + "/schedule.html"
 print (schedulePull)
-
+"""
+schedulePull= "spring2017/schedule.html"
 data = requests.get("https://courses.ksu.edu/" + schedulePull)
 
 
@@ -31,3 +33,12 @@ for url in urlList:
     print(urlSoup.getText())
     """
 
+
+fullURL = "https://courses.ksu.edu/" + "spring" + "2017" + "/AG"
+r = urllib.urlopen(fullURL).read()
+urlSoup = BeautifulSoup(r, "html.parser")
+courses = urlSoup.find_all('tr', class_='course')
+
+for c in courses:
+    for cont in c.contents:
+        print(cont.get_text())
