@@ -9,9 +9,6 @@ def __main__():
     year = input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
     semester = raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
 
-    """
-        Add if statement for if schedule requested is older than 2016, change web scrape style
-    """
 
 
     schedulePull = semester + str(year) + "/schedule.html"
@@ -69,7 +66,7 @@ def __main__():
                 for sectionRow in data.find_all('tr', class_='st'):
                     counter = 0
                     courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td'):
+                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
                         if(counter != 4 and counter != 8 and counter != 10):
                             if(elem.get_text() == "Appointment"):
                                 courseContentWrite.write("\"\", \"\", ")
@@ -89,7 +86,7 @@ def __main__():
                 for sectionRow in data.find_all('tr', class_='st'):
                     counter = 0
                     courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td'):
+                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
                         if(counter != 4 and counter != 8 and counter != 10):
                             if(elem.get_text() == "Appointment"):
                                 courseContentWrite.write("\"\", \"\", ")
@@ -109,14 +106,13 @@ def __main__():
                 for sectionRow in data.find_all('tr', class_='st'):
                     counter = 0
                     courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td'):
+                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
                         if(counter != 4 and counter != 8 and counter != 10):
                             if(elem.get_text() == "Appointment"):
                                 courseContentWrite.write("\"\", \"\", ")
                                 counter += 1
                                 counter += 1
                             else:
-                                #REMOVE THE ENCODE WHEN YOU FIX THE SANITIZE FUNCTION
                                 if(counter == 5):
                                     cleanText = sanitize(elem.get_text(), "day")
                                     courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
@@ -159,13 +155,10 @@ def sanitize(sanText, type):
         return (cleanText)
 
     elif(type == "time"):
-        print
         return sanText
 
     elif(type == "place"):
-        print
         return sanText
 
     elif(type == "instructor"):
-        print
         return sanText
