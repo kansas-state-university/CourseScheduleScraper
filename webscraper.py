@@ -6,8 +6,8 @@ import urllib
 
 
 def __main__():
-    year = 2017 #input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
-    semester = "spring" #raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
+    year = input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
+    semester = raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
 
 
 
