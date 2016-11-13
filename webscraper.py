@@ -6,8 +6,8 @@ import urllib
 
 
 def __main__():
-    year = input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
-    semester = raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
+    year = 2017 #input("What year would you like to make a schedule for? (All four digits of year entered.)\n")
+    semester = "spring" #raw_input("What semester would you like to make a schedule for? (Spring/Summer/Fall)\n")
 
 
 
@@ -41,108 +41,68 @@ def __main__():
         urlSoup = BeautifulSoup(r, "html.parser")
         coursesHeader = urlSoup.find_all('tr', class_='course')
 
-
         headerCount = 0
         for c in coursesHeader:
             for cont in c.contents:
-                if(headerCount >= len(coursesHeader) - 1 and urlCounter >= len(urlList) - 1):
+                if (headerCount >= len(coursesHeader) - 1 and urlCounter >= len(urlList) - 1):
                     modString = (regex.split('(\d+)', cont.get_text()))
-                    courseHeadWrite.write("(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[2].replace("\"", "") + "\")" + "\n")
-                elif(headerCount >= len(coursesHeader) - 1 and urlCounter < len(urlList) - 1):
+                    courseHeadWrite.write(
+                        "(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[
+                            2].replace("\"", "") + "\");" + "\n")
+                elif (headerCount >= len(coursesHeader) - 1 and urlCounter < len(urlList) - 1):
                     modString = (regex.split('(\d+)', cont.get_text()))
-                    courseHeadWrite.write("(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[2].replace("\"", "") + "\")," + "\n")
+                    courseHeadWrite.write(
+                        "(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[
+                            2].replace("\"", "") + "\")," + "\n")
                 else:
                     modString = (regex.split('(\d+)', cont.get_text()))
-                    courseHeadWrite.write("(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[2].replace("\"", "") + "\")," + "\n")
-                    headerCount += 1
-
+                    courseHeadWrite.write(
+                        "(\"" + modString[0] + "\"" + "," + "\"" + modString[1] + "\"" + "," + "\"" + modString[
+                            2].replace("\"", "") + "\")," + "\n")
+                headerCount += 1
 
 
         coursesContent = urlSoup.find_all('tbody', class_='section')
 
-        contentCount = 0
+        lineCounter = 0
         for data in coursesContent:
-            if(contentCount >= len(coursesContent) - 1 and urlCounter >= len(urlList) - 1):
-                for sectionRow in data.find_all('tr', class_='st'):
-                    counter = 0
-                    courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
-                        if(counter != 4 and counter != 8 and counter != 10):
-                            if(elem.get_text() == "Appointment"):
-                                courseContentWrite.write("\"\", \"\", ")
-                                counter += 1
-                                counter += 1
-                            else:
-                                if(counter == 9):
-                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"")
-                                else:
-                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"" + ", ")
-                                counter += 1
-                        else:
+            for sectionRow in data.find_all('tr', class_='st'):
+                counter = 0
+                courseContentWrite.write("(")
+                for rowData in sectionRow.find_all('td', {'class': lambda x : x != "session-label"}):
+                    if (counter != 4 and counter != 8 and counter != 10):
+                        if (rowData.get_text() == "Appointment"):
+                            courseContentWrite.write("\"\", \"\", ")
                             counter += 1
-                    courseContentWrite.write(")")
+                            counter += 1
+                        else:
+                            if (counter == 5):
+                                cleanText = sanitize(rowData.get_text(), "day")
+                                courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
 
-            elif(contentCount >= len(coursesContent) - 1 and urlCounter < len(urlList) - 1):
-                for sectionRow in data.find_all('tr', class_='st'):
-                    counter = 0
-                    courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
-                        if(counter != 4 and counter != 8 and counter != 10):
-                            if(elem.get_text() == "Appointment"):
-                                courseContentWrite.write("\"\", \"\", ")
-                                counter += 1
-                                counter += 1
+                            elif (counter == 6):
+                                cleanText = sanitize(rowData.get_text(), "time")
+                                courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
+
+                            elif (counter == 7):
+                                cleanText = sanitize(rowData.get_text(), "place")
+                                courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
+
+                            elif (counter == 9):
+                                cleanText = sanitize(rowData.get_text(), "instructor")
+                                courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"")
                             else:
-                                if(counter == 9):
-                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"")
-                                else:
-                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"" + ", ")
-                                counter += 1
-                        else:
+                                courseContentWrite.write("\"" + rowData.get_text().encode("utf-8") + "\"" + ",")
+
                             counter += 1
+                    else:
+                        counter += 1
+                if(lineCounter >= len(coursesContent) - 1 and urlCounter >= len(urlList) - 1):
+                    courseContentWrite.write(");")
+                else:
                     courseContentWrite.write("),\n")
-
-            else:
-                for sectionRow in data.find_all('tr', class_='st'):
-                    counter = 0
-                    courseContentWrite.write("(")
-                    for elem in sectionRow.find_all('td', attrs={'class': lambda x: x != "session-label"}):
-                        if(counter != 4 and counter != 8 and counter != 10):
-                            if(elem.get_text() == "Appointment"):
-                                courseContentWrite.write("\"\", \"\", ")
-                                counter += 1
-                                counter += 1
-                            else:
-                                if(counter == 5):
-                                    cleanText = sanitize(elem.get_text(), "day")
-                                    courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
-
-                                elif(counter == 6):
-                                    cleanText = sanitize(elem.get_text(), "time")
-                                    courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
-
-                                elif(counter == 7):
-                                    cleanText = sanitize(elem.get_text(), "place")
-                                    courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"" + ",")
-
-                                elif(counter == 9):
-                                    cleanText = sanitize(elem.get_text(), "instructor")
-                                    courseContentWrite.write("\"" + cleanText.encode("utf-8") + "\"")
-                                else:
-                                    courseContentWrite.write("\"" + elem.get_text().encode("utf-8") + "\"" + ",")
-
-                                counter += 1
-                        else:
-                            counter += 1
-                    courseContentWrite.write(")")
-                    courseContentWrite.write(",\n")
-            contentCount += 1
-        urlCounter += 1
-
-    courseContentWrite.write(";")
-    courseHeadWrite.write(";")
-    courseHeadWrite.close()
-    courseContentWrite.close()
+            lineCounter += 1
+        urlCounter+=1
 
 
 def sanitize(sanText, type):

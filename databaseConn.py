@@ -15,8 +15,19 @@ file2 = open('courseCont.txt', 'r')
 
 table1 = file1.read()
 table2 = file2.read()
+fixedTable2 = "INSERT INTO courseContent VALUES "
+
+quoteCount = 0
+for line in table2.splitlines():
+    quoteCount = line.count('\"')
+    if(quoteCount >= 16):
+        fixedTable2 += line + " "
+
+
+print(fixedTable2)
+
 
 cursor.execute(table1)
-cursor.execute(table2)
+cursor.execute(fixedTable2)
 cnx.commit()
 cnx.close()
